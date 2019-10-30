@@ -26,10 +26,6 @@ trait DirectoryTrait
             throw new ApplicationException(sprintf('"%s" directory path must not be empty', $name));
         }
         
-        if (mb_strlen($path) > 1) {
-            $path = rtrim($path, $separator);
-        }
-        
         // resolve references
         if (mb_strpos($path, $referencer) !== false) {
             $path = preg_replace_callback('~' . $referencer . '([^' . $separator . ']+)~i', function ($matches) {
@@ -37,7 +33,7 @@ trait DirectoryTrait
             }, $path);
         }
         
-        $this->directories[$name] = $path;
+        $this->directories[$name] = $this->normalize($path);
     
         /** @var ApplicationInterface $this */
         return $this;
@@ -59,13 +55,15 @@ trait DirectoryTrait
     /**
      * @inheritDoc
      */
-    public function getDirectory(string $name): string
+    public function getDirectory(string $name, array $children = []): string
     {
+        $separator = DIRECTORY_SEPARATOR;
+        
         if (!array_key_exists($name, $this->directories)) {
             throw new ApplicationException(sprintf('Directory "%s" is not registered', $name));
         }
         
-        return $this->directories[$name];
+        return $this->directories[$name] . $this->normalize(implode($separator, $children));
     }
     
     /**
@@ -93,5 +91,22 @@ trait DirectoryTrait
                 mkdir($path, $mask, $recursive);
             }
         }
+    }
+    
+    /**
+     * Normalizes path
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    protected function normalize(string $path)
+    {
+        $separator = DIRECTORY_SEPARATOR;
+        
+        $path = rtrim($path, $separator) . $separator;
+        $path = preg_replace('~' . $separator . '{2,}~', $separator, $path);
+        
+        return $path;
     }
 }

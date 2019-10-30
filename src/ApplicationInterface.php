@@ -106,14 +106,16 @@ interface ApplicationInterface extends RequestHandlerInterface, EventsAwareInter
      * @return self
      */
     public function registerDirectories(array $directories): self;
-
+    
     /**
      * Gets directory path by name
      *
-     * @param  string $name
+     * @param string $name
+     * @param string[] $children
+     *
      * @return string
      */
-    public function getDirectory(string $name): string;
+    public function getDirectory(string $name, array $children = []): string;
 
     /**
      * Gets registered directories array

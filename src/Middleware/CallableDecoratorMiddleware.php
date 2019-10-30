@@ -1,6 +1,6 @@
 <?php
 
-namespace Tolkam\Application\Middleware\CallableDecorator;
+namespace Tolkam\Application\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
