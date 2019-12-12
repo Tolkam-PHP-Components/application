@@ -63,7 +63,11 @@ trait DirectoryTrait
             throw new ApplicationException(sprintf('Directory "%s" is not registered', $name));
         }
         
-        return $this->directories[$name] . $this->normalize(implode($separator, $children));
+        $childPath = !empty($children)
+            ? $this->normalize(implode($separator, $children))
+            : '';
+        
+        return $this->directories[$name] . $childPath;
     }
     
     /**
