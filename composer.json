@@ -1,6 +1,6 @@
 {
     "name": "tolkam/application",
-    "description": "PSR-15 application",
+    "description": "PSR-15/CLI applications",
     "type": "library",
     "license": "proprietary",
     "minimum-stability": "dev",
@@ -17,8 +17,10 @@
         "psr/http-factory": "^1.0",
         "psr/http-server-handler": "~1.0",
         "psr/http-server-middleware": "~1.0",
-        "tolkam/psr15-dispatcher": "dev-master",
-        "tolkam/event-manager": "dev-master"
+        "tolkam/psr15-dispatcher": "^1.0@dev",
+        "symfony/console": "^5.0",
+        "symfony/process": "^5.0",
+        "symfony/lock": "^5.0"
     },
     "extra": {
         "branch-alias": {

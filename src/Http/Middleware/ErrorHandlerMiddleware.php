@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tolkam\Application\Middleware;
+namespace Tolkam\Application\Http\Middleware;
 
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
-use Tolkam\Application\HttpException;
+use Tolkam\Application\Http\HttpException;
 
 class ErrorHandlerMiddleware implements MiddlewareInterface
 {
@@ -24,7 +24,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     {
         $this->responseFactory = $responseFactory;
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -38,7 +38,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             }
             $response = $this->handleException($t);
         }
-
+        
         return $response;
     }
     
@@ -55,26 +55,26 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     /**
      * Checks if exception should be logged
      *
-     * @param  Throwable $t
+     * @param Throwable $t
      *
      * @return bool
      */
     protected function shouldBeLogged(Throwable $t): bool
     {
         $shouldBeLogged = true;
-
+        
         if ($t instanceof HttpException) {
             $code = $t->getCode();
             $shouldBeLogged = $code === 500 || ($code > 599 || $code < 200);
         }
-
+        
         return $shouldBeLogged;
     }
     
     /**
      * Gets http status code from thrown exception
      *
-     * @param  Throwable $t
+     * @param Throwable $t
      *
      * @return int
      */
@@ -86,7 +86,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     /**
      * Gets response headers
      *
-     * @param  Throwable $t
+     * @param Throwable $t
      *
      * @return array
      */
@@ -98,7 +98,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     /**
      * Gets response body
      *
-     * @param  Throwable $t
+     * @param Throwable $t
      *
      * @return string
      */
@@ -106,18 +106,18 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     {
         $statusCode = $this->getStatusCode($t);
         $reasonPhrase = $this->getResponseFactory()->createResponse($statusCode)->getReasonPhrase();
-
+        
         if ($t instanceof HttpException) {
             $reasonPhrase = $t->getMessage();
         }
-
+        
         return 'Error ' . $statusCode . ': ' . $reasonPhrase;
     }
     
     /**
      * Handles exception
      *
-     * @param  Throwable $t
+     * @param Throwable $t
      *
      * @return ResponseInterface
      */
@@ -126,14 +126,14 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         $statusCode = $this->getStatusCode($t);
         $headers = $this->getHeaders($t);
         $body = $this->getBody($t);
-
+        
         $response = $this->getResponseFactory()->createResponse($statusCode);
         foreach ($headers as $k => $v) {
             $response = $response->withHeader($k, $v);
         }
-
+        
         $response->getBody()->write($body);
-
+        
         return $response;
     }
 }

@@ -1,13 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Tolkam\Application\Middleware;
+namespace Tolkam\Application\Http\Middleware;
 
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Throwable;
 
 class PassThroughMiddleware implements MiddlewareInterface
 {

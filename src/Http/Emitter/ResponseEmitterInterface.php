@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tolkam\Application\Emitter;
+namespace Tolkam\Application\Http\Emitter;
 
 use Psr\Http\Message\ResponseInterface;
 

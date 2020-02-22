@@ -2,7 +2,9 @@
 
 namespace Tolkam\Application;
 
-trait DirectoryTrait
+use Tolkam\Application\Http\HttpApplicationException;
+
+trait DirectoryManagementTrait
 {
     /**
      * registered directories
@@ -11,30 +13,39 @@ trait DirectoryTrait
     private $directories = [];
     
     /**
+     * Directory separator
+     * @var string
+     */
+    private static $sep = '/';
+    
+    /**
      * @inheritDoc
      */
     public function registerDirectory(string $name, string $path): ApplicationInterface
     {
-        $separator = DIRECTORY_SEPARATOR;
+        /**
+         * Directory path may refer other directories
+         * by their name prefixed with `@` - `@root/public`
+         */
         $referencer = '@';
         
         if (array_key_exists($name, $this->directories)) {
-            throw new ApplicationException(sprintf('Directory "%s" is already registered', $name));
+            throw new HttpApplicationException(sprintf('Directory "%s" is already registered', $name));
         }
         
         if (empty($path)) {
-            throw new ApplicationException(sprintf('"%s" directory path must not be empty', $name));
+            throw new HttpApplicationException(sprintf('"%s" directory path must not be empty', $name));
         }
         
         // resolve references
         if (mb_strpos($path, $referencer) !== false) {
-            $path = preg_replace_callback('~' . $referencer . '([^' . $separator . ']+)~i', function ($matches) {
+            $path = preg_replace_callback('~' . $referencer . '([^/]+)~i', function ($matches) {
                 return $this->getDirectory($matches[1]);
             }, $path);
         }
         
         $this->directories[$name] = $this->normalize($path);
-    
+        
         /** @var ApplicationInterface $this */
         return $this;
     }
@@ -47,7 +58,7 @@ trait DirectoryTrait
         foreach ($directories as $k => $v) {
             $this->registerDirectory($k, $v);
         }
-    
+        
         /** @var ApplicationInterface $this */
         return $this;
     }
@@ -57,10 +68,10 @@ trait DirectoryTrait
      */
     public function getDirectory(string $name, array $children = []): string
     {
-        $separator = DIRECTORY_SEPARATOR;
+        $separator = self::$sep;
         
         if (!array_key_exists($name, $this->directories)) {
-            throw new ApplicationException(sprintf('Directory "%s" is not registered', $name));
+            throw new HttpApplicationException(sprintf('Directory "%s" is not registered', $name));
         }
         
         $childPath = !empty($children)
@@ -106,7 +117,7 @@ trait DirectoryTrait
      */
     protected function normalize(string $path)
     {
-        $separator = DIRECTORY_SEPARATOR;
+        $separator = self::$sep;
         
         $path = rtrim($path, $separator) . $separator;
         $path = preg_replace('~' . $separator . '{2,}~', $separator, $path);

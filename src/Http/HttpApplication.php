@@ -1,26 +1,21 @@
 <?php declare(strict_types=1);
 
-namespace Tolkam\Application;
+namespace Tolkam\Application\Http;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use Tolkam\Application\Emitter\ResponseEmitterInterface;
-use Tolkam\Application\Event\AfterRunEvent;
-use Tolkam\Application\Event\BeforeRunEvent;
-use Tolkam\EventManager\EventsAwareTrait;
+use Psr\Http\Server\RequestHandlerInterface;
+use Tolkam\Application\ApplicationInterface;
+use Tolkam\Application\DirectoryManagementTrait;
+use Tolkam\Application\EnvironmentAwareTrait;
+use Tolkam\Application\Http\Emitter\ResponseEmitterInterface;
 use Tolkam\PSR15\Dispatcher\Dispatcher;
 
-class Application implements ApplicationInterface
+class HttpApplication implements ApplicationInterface, RequestHandlerInterface
 {
-    use DirectoryTrait;
-    use EventsAwareTrait;
-    
-    /**
-     * current environment
-     * @var string
-     */
-    private $environment = self::ENV_PRODUCTION;
+    use EnvironmentAwareTrait;
+    use DirectoryManagementTrait;
     
     /**
      * @var Dispatcher
@@ -38,71 +33,77 @@ class Application implements ApplicationInterface
     private $defaultResponse;
     
     /**
-     * @param string $environment
-     *
-     * @throws ApplicationException
+     * @return void
      */
-    public function __construct(string $environment = self::ENV_PRODUCTION)
+    public function __construct()
     {
-        $knownEnvironments = self::KNOWN_ENVIRONMENTS;
-        if (!in_array($environment, $knownEnvironments)) {
-            throw new ApplicationException(sprintf(
-                'Unknown environment value, known values are "%s"',
-                implode('", "', $knownEnvironments)
-            ));
-        }
-
-        $this->environment = $environment;
         $this->dispatcher = Dispatcher::create($this);
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function getEnvironment(): string
-    {
-        return $this->environment;
-    }
     
     /**
-     * @inheritDoc
+     * Sets default response
+     *
+     * @param ResponseInterface $defaultResponse
+     *
+     * @return self
      */
-    public function setDefaultResponse(ResponseInterface $defaultResponse): void
+    public function setDefaultResponse(ResponseInterface $defaultResponse): self
     {
         $this->defaultResponse = $defaultResponse;
+        
+        return $this;
     }
-
+    
     /**
-     * @inheritDoc
+     * Adds middleware
+     *
+     * @param MiddlewareInterface $middleware
+     *
+     * @return self
      */
-    public function addMiddleware(MiddlewareInterface $middleware): ApplicationInterface
+    public function addMiddleware(MiddlewareInterface $middleware): self
     {
         $this->dispatcher->middleware($middleware);
+        
         return $this;
     }
-
+    
     /**
-     * @inheritDoc
+     * Adds middlewares from array
+     *
+     * @param array $middlewares
+     *
+     * @return self
      */
-    public function addMiddlewares(array $middlewares): ApplicationInterface
+    public function addMiddlewares(array $middlewares): self
     {
         $this->dispatcher->middlewares($middlewares);
+        
         return $this;
     }
     
     /**
-     * @inheritDoc
+     * Adds emitter to the stack
+     *
+     * @param ResponseEmitterInterface $emitter
+     *
+     * @return self
      */
-    public function addEmitter(ResponseEmitterInterface $emitter): ApplicationInterface
+    public function addEmitter(ResponseEmitterInterface $emitter): self
     {
         $this->emitters[] = $emitter;
+        
         return $this;
     }
     
     /**
-     * @inheritDoc
+     * Adds emitters from array
+     *
+     * @param ResponseEmitterInterface[] $emitters
+     *
+     * @return self
      */
-    public function addEmitters(array $emitters): ApplicationInterface
+    public function addEmitters(array $emitters): self
     {
         foreach ($emitters as $emitter) {
             $this->addEmitter($emitter);
@@ -112,21 +113,17 @@ class Application implements ApplicationInterface
     }
     
     /**
-     * @inheritDoc
+     * Runs the middlewares and emits the response
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @throws HttpApplicationException
      */
-    public function run(ServerRequestInterface $request)
+    public function run(ServerRequestInterface $request): void
     {
-        if ($eventManager = $this->eventManager) {
-            $eventManager->emit(new BeforeRunEvent);
-        }
-        
         $this->emit($this->handle($request));
-    
-        if ($eventManager) {
-            $eventManager->emit(new AfterRunEvent);
-        }
     }
-
+    
     /**
      * @inheritDoc
      */
@@ -138,7 +135,7 @@ class Application implements ApplicationInterface
                 return $this->defaultResponse;
             }
             
-            throw new ApplicationException(
+            throw new HttpApplicationException(
                 'Middlewares queue is empty or exhausted without response and no default response is set'
             );
         }
@@ -152,7 +149,7 @@ class Application implements ApplicationInterface
      * @param ResponseInterface $response
      *
      * @return bool
-     * @throws ApplicationException
+     * @throws HttpApplicationException
      */
     private function emit(ResponseInterface $response): bool
     {
@@ -161,8 +158,8 @@ class Application implements ApplicationInterface
                 return $emitted;
             }
         }
-    
-        throw new ApplicationException(
+        
+        throw new HttpApplicationException(
             'Emitters stack is empty or none of the emitters was able to emit the response'
         );
     }

@@ -1,12 +1,12 @@
 <?php
 
-namespace Tolkam\Application\Middleware;
+namespace Tolkam\Application\Http\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Tolkam\Application\ApplicationException;
+use Tolkam\Application\Http\HttpApplicationException;
 
 class CallableDecoratorMiddleware implements MiddlewareInterface
 {
@@ -14,7 +14,7 @@ class CallableDecoratorMiddleware implements MiddlewareInterface
      * @var callable
      */
     protected $middleware;
-
+    
     /**
      * @param callable $middleware
      */
@@ -22,22 +22,22 @@ class CallableDecoratorMiddleware implements MiddlewareInterface
     {
         $this->middleware = $middleware;
     }
-
+    
     /**
      * @inheritDoc
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = ($this->middleware)($request, $handler);
-
+        
         if (!($response instanceof ResponseInterface)) {
-            throw new ApplicationException(sprintf(
+            throw new HttpApplicationException(sprintf(
                 'Callable must return an instance of %s, %s returned',
                 ResponseInterface::class,
                 gettype($response)
             ));
         }
-
+        
         return $response;
     }
 }

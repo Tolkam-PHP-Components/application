@@ -1,16 +1,17 @@
 <?php
-namespace Tolkam\Application;
+
+namespace Tolkam\Application\Http;
 
 use Throwable;
 
-class HttpException extends ApplicationException
+class HttpException extends HttpApplicationException
 {
     /**
      * http headers
      * @var array
      */
     private $headers = [];
-
+    
     /**
      * known http statuses
      * @var array
@@ -19,7 +20,7 @@ class HttpException extends ApplicationException
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
-
+        
         200 => 'OK',
         201 => 'Created',
         202 => 'Accepted',
@@ -29,7 +30,7 @@ class HttpException extends ApplicationException
         206 => 'Partial Content',
         207 => 'Multi-status',
         208 => 'Already Reported',
-
+        
         300 => 'Multiple Choices',
         301 => 'Moved Permanently',
         302 => 'Found',
@@ -38,7 +39,7 @@ class HttpException extends ApplicationException
         305 => 'Use Proxy',
         306 => 'Switch Proxy',
         307 => 'Temporary Redirect',
-
+        
         400 => 'Bad Request',
         401 => 'Unauthorized',
         402 => 'Payment Required',
@@ -66,7 +67,7 @@ class HttpException extends ApplicationException
         428 => 'Precondition Required',
         429 => 'Too Many Requests',
         431 => 'Request Header Fields Too Large',
-
+        
         500 => 'Internal Server Error',
         501 => 'Not Implemented',
         502 => 'Bad Gateway',
@@ -76,9 +77,9 @@ class HttpException extends ApplicationException
         506 => 'Variant Also Negotiates',
         507 => 'Insufficient Storage',
         508 => 'Loop Detected',
-        511 => 'Network Authentication Required'
+        511 => 'Network Authentication Required',
     ];
-
+    
     /**
      * @param string    $message
      * @param int       $code
@@ -87,15 +88,15 @@ class HttpException extends ApplicationException
      */
     public function __construct(?string $message, int $code, Throwable $previous = null, array $headers = [])
     {
-        if (! in_array($code, array_keys($this->statuses))) {
+        if (!in_array($code, array_keys($this->statuses))) {
             $code = 500;
         }
-
+        
         $this->headers = $headers;
-
+        
         parent::__construct($message ?? $this->statuses[$code], $code, $previous);
     }
-
+    
     /**
      * Gets headers
      *

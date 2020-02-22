@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tolkam\Application\Emitter;
+namespace Tolkam\Application\Http\Emitter;
 
 use Psr\Http\Message\ResponseInterface;
 
@@ -30,7 +30,7 @@ class SapiEmitter implements ResponseEmitterInterface
         if (headers_sent()) {
             throw new EmitterException('Unable to emit response, headers already sent');
         }
-    
+        
         if (ob_get_level() > 0 && ob_get_length() > 0) {
             throw new EmitterException('Unable to emit response, body already sent');
         }
@@ -39,21 +39,21 @@ class SapiEmitter implements ResponseEmitterInterface
     /**
      * Emits the status line
      *
-     * @param  ResponseInterface $response
+     * @param ResponseInterface $response
      */
     protected function emitStatus(ResponseInterface $response)
     {
         $protocolVersion = $response->getProtocolVersion();
-        $statusCode      = $response->getStatusCode();
-        $reasonPhrase    = $response->getReasonPhrase();
-    
+        $statusCode = $response->getStatusCode();
+        $reasonPhrase = $response->getReasonPhrase();
+        
         header(trim(sprintf('HTTP/%s %d %s', $protocolVersion, $statusCode, $reasonPhrase)), true, $statusCode);
     }
     
     /**
      * Emits the response headers
      *
-     * @param  ResponseInterface $response
+     * @param ResponseInterface $response
      */
     protected function emitHeaders(ResponseInterface $response)
     {
@@ -65,8 +65,8 @@ class SapiEmitter implements ResponseEmitterInterface
     /**
      * Emits header line
      *
-     * @param  string $name
-     * @param  mixed $values
+     * @param string $name
+     * @param mixed  $values
      */
     protected function emitHeaderLine(string $name, $values)
     {
@@ -78,7 +78,7 @@ class SapiEmitter implements ResponseEmitterInterface
     /**
      * Emits the response body
      *
-     * @param  ResponseInterface $response
+     * @param ResponseInterface $response
      */
     protected function emitBody(ResponseInterface $response)
     {
