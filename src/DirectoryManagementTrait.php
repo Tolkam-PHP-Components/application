@@ -10,13 +10,13 @@ trait DirectoryManagementTrait
      * registered directories
      * @var array
      */
-    private $directories = [];
+    private array $directories = [];
     
     /**
      * Directory separator
      * @var string
      */
-    private static $sep = '/';
+    private static string $sep = '/';
     
     /**
      * @inheritDoc
@@ -115,13 +115,11 @@ trait DirectoryManagementTrait
      *
      * @return string
      */
-    protected function normalize(string $path)
+    protected function normalize(string $path): string
     {
         $separator = self::$sep;
-        
         $path = rtrim($path, $separator) . $separator;
-        $path = preg_replace('~' . $separator . '{2,}~', $separator, $path);
         
-        return $path;
+        return preg_replace('~' . $separator . '{2,}~', $separator, $path);
     }
 }

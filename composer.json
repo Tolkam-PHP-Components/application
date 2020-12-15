@@ -11,7 +11,7 @@
         }
     },
     "require": {
-        "php": ">=7.2.0",
+        "php": ">=7.4",
         "ext-mbstring": "*",
         "psr/http-message": "~1.0",
         "psr/http-factory": "^1.0",
@@ -21,6 +21,10 @@
         "symfony/console": "^5.0",
         "symfony/process": "^5.0",
         "symfony/lock": "^5.0"
+    },
+    "suggest": {
+        "tolkam/application-extras": "Useful middlewares, factories and more",
+        "tolkam/application-boilerplate-web": "Common web application boilerplate"
     },
     "extra": {
         "branch-alias": {

@@ -10,13 +10,13 @@ class HttpException extends HttpApplicationException
      * http headers
      * @var array
      */
-    private $headers = [];
+    private array $headers;
     
     /**
      * known http statuses
      * @var array
      */
-    private $statuses = [
+    private array $statuses = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
@@ -81,13 +81,17 @@ class HttpException extends HttpApplicationException
     ];
     
     /**
-     * @param string    $message
-     * @param int       $code
-     * @param Throwable $previous
-     * @param array     $headers
+     * @param string|null    $message
+     * @param int            $code
+     * @param Throwable|null $previous
+     * @param array          $headers
      */
-    public function __construct(?string $message, int $code, Throwable $previous = null, array $headers = [])
-    {
+    public function __construct(
+        ?string $message,
+        int $code,
+        Throwable $previous = null,
+        array $headers = []
+    ) {
         if (!in_array($code, array_keys($this->statuses))) {
             $code = 500;
         }

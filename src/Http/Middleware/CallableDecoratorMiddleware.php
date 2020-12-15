@@ -26,8 +26,10 @@ class CallableDecoratorMiddleware implements MiddlewareInterface
     /**
      * @inheritDoc
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
+    public function process(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler
+    ): ResponseInterface {
         $response = ($this->middleware)($request, $handler);
         
         if (!($response instanceof ResponseInterface)) {

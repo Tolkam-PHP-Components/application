@@ -12,8 +12,10 @@ class PassThroughMiddleware implements MiddlewareInterface
     /**
      * @inheritDoc
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
+    public function process(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler
+    ): ResponseInterface {
         return $handler->handle($request);
     }
 }

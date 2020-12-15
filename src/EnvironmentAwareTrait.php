@@ -10,7 +10,7 @@ trait EnvironmentAwareTrait
      * current environment
      * @var string
      */
-    private $environment = ApplicationInterface::ENV_PRODUCTION;
+    private string $environment = ApplicationInterface::ENV_PRODUCTION;
     
     /**
      * @param string $environment

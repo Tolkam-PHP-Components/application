@@ -15,7 +15,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     /**
      * @var ResponseFactoryInterface
      */
-    protected $responseFactory;
+    protected ResponseFactoryInterface $responseFactory;
     
     /**
      * @param ResponseFactoryInterface $responseFactory
@@ -28,8 +28,10 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     /**
      * @inheritDoc
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
+    public function process(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler
+    ): ResponseInterface {
         try {
             $response = $handler->handle($request);
         } catch (Throwable $t) {
@@ -47,7 +49,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      *
      * @return ResponseFactoryInterface
      */
-    public function getResponseFactory()
+    public function getResponseFactory(): ResponseFactoryInterface
     {
         return $this->responseFactory;
     }

@@ -20,17 +20,17 @@ class HttpApplication implements ApplicationInterface, RequestHandlerInterface
     /**
      * @var Dispatcher
      */
-    private $dispatcher;
+    private Dispatcher $dispatcher;
     
     /**
      * @var ResponseEmitterInterface[]
      */
-    private $emitters = [];
+    private array $emitters = [];
     
     /**
      * @var ResponseInterface|null
      */
-    private $defaultResponse;
+    private ?ResponseInterface $defaultResponse = null;
     
     /**
      * @return void
