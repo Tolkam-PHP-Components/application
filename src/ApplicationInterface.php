@@ -7,21 +7,21 @@ interface ApplicationInterface extends DirectoryManagementAwareInterface
     /**
      * app environments
      */
-    const ENV_DEVELOPMENT = 'development';
-    const ENV_TESTING     = 'testing';
-    const ENV_STAGING     = 'staging';
-    const ENV_PRODUCTION  = 'production';
-    
+    public const ENV_DEVELOPMENT = 'development';
+    public const ENV_TESTING     = 'testing';
+    public const ENV_STAGING     = 'staging';
+    public const ENV_PRODUCTION  = 'production';
+
     /**
      * known environments
      */
-    const KNOWN_ENVIRONMENTS = [
+    public const KNOWN_ENVIRONMENTS = [
         self::ENV_DEVELOPMENT,
         self::ENV_TESTING,
         self::ENV_STAGING,
         self::ENV_PRODUCTION,
     ];
-    
+
     /**
      * Gets the current environment value
      *

@@ -11,7 +11,7 @@ class HttpException extends HttpApplicationException
      * @var array
      */
     private array $headers;
-    
+
     /**
      * known http statuses
      * @var array
@@ -20,7 +20,7 @@ class HttpException extends HttpApplicationException
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
-        
+
         200 => 'OK',
         201 => 'Created',
         202 => 'Accepted',
@@ -30,7 +30,7 @@ class HttpException extends HttpApplicationException
         206 => 'Partial Content',
         207 => 'Multi-status',
         208 => 'Already Reported',
-        
+
         300 => 'Multiple Choices',
         301 => 'Moved Permanently',
         302 => 'Found',
@@ -39,7 +39,7 @@ class HttpException extends HttpApplicationException
         305 => 'Use Proxy',
         306 => 'Switch Proxy',
         307 => 'Temporary Redirect',
-        
+
         400 => 'Bad Request',
         401 => 'Unauthorized',
         402 => 'Payment Required',
@@ -67,7 +67,7 @@ class HttpException extends HttpApplicationException
         428 => 'Precondition Required',
         429 => 'Too Many Requests',
         431 => 'Request Header Fields Too Large',
-        
+
         500 => 'Internal Server Error',
         501 => 'Not Implemented',
         502 => 'Bad Gateway',
@@ -79,7 +79,7 @@ class HttpException extends HttpApplicationException
         508 => 'Loop Detected',
         511 => 'Network Authentication Required',
     ];
-    
+
     /**
      * @param string|null    $message
      * @param int            $code
@@ -95,12 +95,12 @@ class HttpException extends HttpApplicationException
         if (!in_array($code, array_keys($this->statuses))) {
             $code = 500;
         }
-        
+
         $this->headers = $headers;
-        
+
         parent::__construct($message ?? $this->statuses[$code], $code, $previous);
     }
-    
+
     /**
      * Gets headers
      *

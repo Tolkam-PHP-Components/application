@@ -12,14 +12,14 @@ class SapiEmitter implements ResponseEmitterInterface
     public function emit(ResponseInterface $response): bool
     {
         $this->ensureEmitPossible();
-        
+
         $this->emitStatus($response);
         $this->emitHeaders($response);
         $this->emitBody($response);
-        
+
         return true;
     }
-    
+
     /**
      * Ensures emitting is possible and to data is sent already
      *
@@ -30,12 +30,12 @@ class SapiEmitter implements ResponseEmitterInterface
         if (headers_sent()) {
             throw new EmitterException('Unable to emit response, headers already sent');
         }
-        
+
         if (ob_get_level() > 0 && ob_get_length() > 0) {
             throw new EmitterException('Unable to emit response, body already sent');
         }
     }
-    
+
     /**
      * Emits the status line
      *
@@ -46,10 +46,10 @@ class SapiEmitter implements ResponseEmitterInterface
         $protocolVersion = $response->getProtocolVersion();
         $statusCode = $response->getStatusCode();
         $reasonPhrase = $response->getReasonPhrase();
-        
+
         header(trim(sprintf('HTTP/%s %d %s', $protocolVersion, $statusCode, $reasonPhrase)), true, $statusCode);
     }
-    
+
     /**
      * Emits the response headers
      *
@@ -61,7 +61,7 @@ class SapiEmitter implements ResponseEmitterInterface
             $this->emitHeaderLine($name, $values);
         }
     }
-    
+
     /**
      * Emits header line
      *
@@ -74,7 +74,7 @@ class SapiEmitter implements ResponseEmitterInterface
             header(sprintf('%s: %s', $this->normalizeHeaderName($name), $value), false);
         }
     }
-    
+
     /**
      * Emits the response body
      *
@@ -84,20 +84,19 @@ class SapiEmitter implements ResponseEmitterInterface
     {
         echo $response->getBody();
     }
-    
+
     /**
      * Normalizes header name
      *
      * @param string $name
      *
-     * @return mixed|string
+     * @return array|string|string[]
      */
     protected function normalizeHeaderName(string $name)
     {
         $name = str_replace('-', ' ', $name);
         $name = ucwords($name);
-        $name = str_replace(' ', '-', $name);
-        
-        return $name;
+
+        return str_replace(' ', '-', $name);
     }
 }

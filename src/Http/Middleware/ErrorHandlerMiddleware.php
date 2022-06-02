@@ -16,7 +16,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      * @var ResponseFactoryInterface
      */
     protected ResponseFactoryInterface $responseFactory;
-    
+
     /**
      * @param ResponseFactoryInterface $responseFactory
      */
@@ -24,7 +24,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     {
         $this->responseFactory = $responseFactory;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -40,10 +40,10 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             }
             $response = $this->handleException($t);
         }
-        
+
         return $response;
     }
-    
+
     /**
      * Gets the response factory
      *
@@ -53,7 +53,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     {
         return $this->responseFactory;
     }
-    
+
     /**
      * Checks if exception should be logged
      *
@@ -64,15 +64,15 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     protected function shouldBeLogged(Throwable $t): bool
     {
         $shouldBeLogged = true;
-        
+
         if ($t instanceof HttpException) {
             $code = $t->getCode();
             $shouldBeLogged = $code === 500 || ($code > 599 || $code < 200);
         }
-        
+
         return $shouldBeLogged;
     }
-    
+
     /**
      * Gets http status code from thrown exception
      *
@@ -84,7 +84,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     {
         return $t instanceof HttpException ? $t->getCode() : 500;
     }
-    
+
     /**
      * Gets response headers
      *
@@ -96,7 +96,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     {
         return [];
     }
-    
+
     /**
      * Gets response body
      *
@@ -108,14 +108,14 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     {
         $statusCode = $this->getStatusCode($t);
         $reasonPhrase = $this->getResponseFactory()->createResponse($statusCode)->getReasonPhrase();
-        
+
         if ($t instanceof HttpException) {
             $reasonPhrase = $t->getMessage();
         }
-        
+
         return 'Error ' . $statusCode . ': ' . $reasonPhrase;
     }
-    
+
     /**
      * Handles exception
      *
@@ -128,14 +128,14 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         $statusCode = $this->getStatusCode($t);
         $headers = $this->getHeaders($t);
         $body = $this->getBody($t);
-        
+
         $response = $this->getResponseFactory()->createResponse($statusCode);
         foreach ($headers as $k => $v) {
             $response = $response->withHeader($k, $v);
         }
-        
+
         $response->getBody()->write($body);
-        
+
         return $response;
     }
 }

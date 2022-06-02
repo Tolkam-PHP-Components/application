@@ -14,7 +14,7 @@ class CallableDecoratorMiddleware implements MiddlewareInterface
      * @var callable
      */
     protected $middleware;
-    
+
     /**
      * @param callable $middleware
      */
@@ -22,7 +22,7 @@ class CallableDecoratorMiddleware implements MiddlewareInterface
     {
         $this->middleware = $middleware;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -31,7 +31,7 @@ class CallableDecoratorMiddleware implements MiddlewareInterface
         RequestHandlerInterface $handler
     ): ResponseInterface {
         $response = ($this->middleware)($request, $handler);
-        
+
         if (!($response instanceof ResponseInterface)) {
             throw new HttpApplicationException(sprintf(
                 'Callable must return an instance of %s, %s returned',
@@ -39,7 +39,7 @@ class CallableDecoratorMiddleware implements MiddlewareInterface
                 gettype($response)
             ));
         }
-        
+
         return $response;
     }
 }

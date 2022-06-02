@@ -16,22 +16,22 @@ class HttpApplication implements ApplicationInterface, RequestHandlerInterface
 {
     use EnvironmentAwareTrait;
     use DirectoryManagementTrait;
-    
+
     /**
      * @var Dispatcher
      */
     private Dispatcher $dispatcher;
-    
+
     /**
      * @var ResponseEmitterInterface[]
      */
     private array $emitters = [];
-    
+
     /**
      * @var ResponseInterface|null
      */
     private ?ResponseInterface $defaultResponse = null;
-    
+
     /**
      * @return void
      */
@@ -39,7 +39,7 @@ class HttpApplication implements ApplicationInterface, RequestHandlerInterface
     {
         $this->dispatcher = Dispatcher::create($this);
     }
-    
+
     /**
      * Sets default response
      *
@@ -50,10 +50,10 @@ class HttpApplication implements ApplicationInterface, RequestHandlerInterface
     public function setDefaultResponse(ResponseInterface $defaultResponse): self
     {
         $this->defaultResponse = $defaultResponse;
-        
+
         return $this;
     }
-    
+
     /**
      * Adds middleware
      *
@@ -64,10 +64,10 @@ class HttpApplication implements ApplicationInterface, RequestHandlerInterface
     public function addMiddleware(MiddlewareInterface $middleware): self
     {
         $this->dispatcher->middleware($middleware);
-        
+
         return $this;
     }
-    
+
     /**
      * Adds middlewares from array
      *
@@ -78,10 +78,10 @@ class HttpApplication implements ApplicationInterface, RequestHandlerInterface
     public function addMiddlewares(array $middlewares): self
     {
         $this->dispatcher->middlewares($middlewares);
-        
+
         return $this;
     }
-    
+
     /**
      * Adds emitter to the stack
      *
@@ -92,10 +92,10 @@ class HttpApplication implements ApplicationInterface, RequestHandlerInterface
     public function addEmitter(ResponseEmitterInterface $emitter): self
     {
         $this->emitters[] = $emitter;
-        
+
         return $this;
     }
-    
+
     /**
      * Adds emitters from array
      *
@@ -108,10 +108,10 @@ class HttpApplication implements ApplicationInterface, RequestHandlerInterface
         foreach ($emitters as $emitter) {
             $this->addEmitter($emitter);
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Runs the middlewares and emits the response
      *
@@ -123,7 +123,7 @@ class HttpApplication implements ApplicationInterface, RequestHandlerInterface
     {
         $this->emit($this->handle($request));
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -134,15 +134,15 @@ class HttpApplication implements ApplicationInterface, RequestHandlerInterface
             if ($this->defaultResponse) {
                 return $this->defaultResponse;
             }
-            
+
             throw new HttpApplicationException(
                 'Middlewares queue is empty or exhausted without response and no default response is set'
             );
         }
-        
+
         return $this->dispatcher->handle($request);
     }
-    
+
     /**
      * Loops through emitters stack passing the response to emit
      *
@@ -158,7 +158,7 @@ class HttpApplication implements ApplicationInterface, RequestHandlerInterface
                 return $emitted;
             }
         }
-        
+
         throw new HttpApplicationException(
             'Emitters stack is empty or none of the emitters was able to emit the response'
         );

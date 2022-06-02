@@ -9,20 +9,22 @@ interface DirectoryManagementAwareInterface
      *
      * @param string $name
      * @param string $path
+     * @param array  $placeholders
      *
      * @return self
      */
-    public function registerDirectory(string $name, string $path): self;
-    
+    public function registerDirectory(string $name, string $path, array $placeholders = []): self;
+
     /**
      * Registers array of directories
      *
      * @param array $directories
+     * @param array $placeholders
      *
      * @return self
      */
-    public function registerDirectories(array $directories): self;
-    
+    public function registerDirectories(array $directories, array $placeholders = []): self;
+
     /**
      * Gets directory path by name
      *
@@ -32,14 +34,14 @@ interface DirectoryManagementAwareInterface
      * @return string
      */
     public function getDirectory(string $name, array $children = []): string;
-    
+
     /**
      * Gets registered directories array
      *
      * @return array
      */
     public function getDirectories(): array;
-    
+
     /**
      * Creates named directories recursively
      *
